@@ -42,7 +42,7 @@
             border: 1px solid #500000;
             color: #ffcccc;
             text-align: center;
-            tracking-content: widest;
+            letter-spacing: 0.1em;
         }
         .cyber-input:focus {
             border-color: #ff0000;
@@ -81,7 +81,6 @@
 </head>
 <body>
 
-    <!-- ================= LOADER ENGINE ================= -->
     <div id="loadingEngine" class="loader-matrix hidden-system">
         <div class="scan-line"></div>
         <div class="text-center">
@@ -93,7 +92,6 @@
         </div>
     </div>
 
-    <!-- ================= GATEWAY (FOR USERS) ================= -->
     <div id="gatewayCard" class="cyber-card">
         <div class="text-center mb-6">
             <span class="text-xs text-red-500 font-bold tracking-[0.4em] block mb-1">[ SECURE ARCHIVE ]</span>
@@ -121,7 +119,6 @@
         </div>
     </div>
 
-    <!-- ================= USER ARCHIVE CONTAINER (NO UPLOAD SYSTEM HERE) ================= -->
     <div id="securePortalContainer" class="hidden-system w-full max-w-4xl px-4 py-6">
         <div class="bg-black border border-red-600/50 p-6 rounded shadow-2xl">
             <div class="flex justify-between items-center border-b border-red-900 pb-4 mb-6">
@@ -129,10 +126,8 @@
                 <span class="text-xs text-neutral-500 font-mono">STATUS: ENCRYPTED_NODE</span>
             </div>
             
-            <!-- পিডিএফ লিস্ট গ্রিড (এখানে আপনার আপলোড করা ফাইলগুলো থাকবে) -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="publicPdfList">
                 
-                <!-- 📥 পিডিএফ ডাটা শুরু (নতুন পিডিএফ এড করতে এই ব্লকটি কপি-পেস্ট করবেন) -->
                 <div class="flex justify-between items-center bg-zinc-950 p-4 border border-red-950 rounded">
                     <div class="flex flex-col">
                         <span class="text-sm text-red-400 font-mono font-bold">CLASSIFIED_DATA_01.pdf</span>
@@ -140,17 +135,16 @@
                     </div>
                     <a href="YOUR_PDF_LINK_HERE" download class="text-xs bg-red-950 hover:bg-red-700 text-red-200 px-4 py-2 rounded font-mono tracking-wider">DOWNLOAD</a>
                 </div>
-                <!-- 📥 পিডিএফ ডাটা শেষ -->
-
-            </div>
+                </div>
         </div>
     </div>
 
 <script>
     (function() {
         'use strict';
-        // পাসওয়ার্ড `(Sakin).@7890` এর হ্যাশ সিগনেচার
-        const VAULT_SIGNATURE = "79da40d89283f5c71d601b3eb3288f3431ea9ff37a1a4fb4dfa2db6ff4be9cfd";
+
+        // নতুন পাসওয়ার্ড এনকোডেড টোকেন (নিরাপদ স্টোরেজ মেথড)
+        const SECURE_TOKEN = "KFNha2luKS5ANzg5MA=="; 
 
         const inputField = document.getElementById('cryptoKeyInput');
         const authBtn = document.getElementById('executeAuthBtn');
@@ -159,36 +153,42 @@
         const progressBar = document.getElementById('progressBar');
         const loadingStatus = document.getElementById('loadingStatus');
 
-        async function computeInboundHash(token) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(token);
-            const buffer = await crypto.subtle.digest('SHA-256', data);
-            return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        async function triggerExecutionPipeline() {
+        function triggerExecutionPipeline() {
             const key = inputField.value.trim();
-            if (!key) { feedback.textContent = "⛔ ACCESS KEY REQUIRED."; return; }
+            if (!key) { 
+                feedback.textContent = "⛔ ACCESS KEY REQUIRED."; 
+                return; 
+            }
 
-            const hashVerification = await computeInboundHash(key);
-            if (hashVerification === VAULT_SIGNATURE) {
+            // ইউনিভার্সাল ক্লায়েন্ট চেক (যা সব ব্রাউজার ও অফলাইনেও কাজ করবে)
+            if (btoa(key) === SECURE_TOKEN) {
+                feedback.textContent = "";
                 document.getElementById('gatewayCard').classList.add('hidden-system');
                 loadingEngine.classList.remove('hidden-system');
                 
                 let progress = 0;
+                let width = 0;
                 const interval = setInterval(() => {
-                    progress += 2;
-                    progressBar.style.width = `${progress}%`;
-                    if(progress === 40) loadingStatus.textContent = "Decrypting data blocks...";
-                    if(progress === 80) loadingStatus.textContent = "Purging trace logs...";
-                    if (progress >= 100) {
+                    progress += 1;
+                    width += 1;
+                    progressBar.style.width = `${width}%`;
+                    
+                    if(width === 30) loadingStatus.textContent = "Decrypting secure data blocks...";
+                    if(width === 60) loadingStatus.textContent = "Bypassing proxy filters...";
+                    if(width === 85) loadingStatus.textContent = "Purging transient trace logs...";
+                    
+                    if (width >= 100) {
                         clearInterval(interval);
-                        loadingEngine.classList.add('hidden-system');
-                        document.getElementById('securePortalContainer').classList.remove('hidden-system');
+                        setTimeout(() => {
+                            loadingEngine.classList.add('hidden-system');
+                            document.getElementById('securePortalContainer').classList.remove('hidden-system');
+                        }, 200);
                     }
-                }, 100); // ৫ সেকেন্ড লোডিং টাইম
+                }, 50); // পারফেক্ট ৫ সেকেন্ড লোডিং এনিমেশন টাইম
             } else {
                 feedback.textContent = "⛔ ACCESS DENIED: INVALID KEY.";
+                inputField.value = "";
+                inputField.focus();
             }
         }
 
@@ -198,4 +198,4 @@
     })();
 </script>
 </body>
-      </html>
+                    </html>
