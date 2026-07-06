@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>⛔ DARK WEB SK 999 - PORTAL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #050000;
+            background-image: radial-gradient(circle at 50% 30%, #200000 0%, #050000 85%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Share Tech Mono', monospace;
+            padding: 1rem;
+            overflow-x: hidden;
+            user-select: none;
+        }
+        .cyber-card {
+            background: rgba(10, 2, 2, 0.95);
+            border: 2px solid #ff0000;
+            box-shadow: 0 0 35px rgba(255, 0, 0, 0.25), inset 0 0 20px rgba(255, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 3rem 2rem;
+            max-width: 500px;
+            width: 100%;
+        }
+        .glitch-title {
+            font-family: 'Orbitron', sans-serif;
+            color: #ff0000;
+            text-shadow: 0 0 12px #ff0000, 0 0 25px #3a0000;
+        }
+        .cyber-input {
+            background: #100505;
+            border: 1px solid #500000;
+            color: #ffcccc;
+            text-align: center;
+            tracking-content: widest;
+        }
+        .cyber-input:focus {
+            border-color: #ff0000;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+        }
+        .neon-btn {
+            background: #990000;
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 0 15px rgba(153, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+        .neon-btn:hover {
+            background: #ff0000;
+            box-shadow: 0 0 35px #ff0000;
+            transform: scale(1.02);
+        }
+        .loader-matrix {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000000;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .scan-line {
+            width: 100%; height: 4px; background: rgba(255, 0, 0, 0.7);
+            position: absolute; animation: scan 2s linear infinite;
+            box-shadow: 0 0 15px #ff0000;
+        }
+        @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
+        .hidden-system { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- ================= LOADER ENGINE ================= -->
+    <div id="loadingEngine" class="loader-matrix hidden-system">
+        <div class="scan-line"></div>
+        <div class="text-center">
+            <h1 class="text-3xl font-black text-red-600 font-sans tracking-[0.5em] mb-4 animate-pulse" style="font-family:'Orbitron';">ACCESSING DATABASE</h1>
+            <div class="w-64 bg-zinc-900 h-1 border border-red-800 mx-auto overflow-hidden relative rounded">
+                <div id="progressBar" class="bg-red-600 h-full w-0 transition-all duration-100"></div>
+            </div>
+            <p id="loadingStatus" class="text-xs text-red-500/70 tracking-widest mt-4 uppercase">Connecting to secure relay...</p>
+        </div>
+    </div>
+
+    <!-- ================= GATEWAY (FOR USERS) ================= -->
+    <div id="gatewayCard" class="cyber-card">
+        <div class="text-center mb-6">
+            <span class="text-xs text-red-500 font-bold tracking-[0.4em] block mb-1">[ SECURE ARCHIVE ]</span>
+            <h1 class="glitch-title text-2xl font-black tracking-wider uppercase">Dark Web Sk 999</h1>
+        </div>
+
+        <div class="mb-4">
+            <div class="flex items-center bg-[#100505] border border-[#500000] rounded focus-within:border-red-600 transition-all">
+                <input id="cryptoKeyInput" type="password" placeholder="ENTER ACCESS TOKEN" class="cyber-input w-full border-0 bg-transparent py-3 px-4 focus:ring-0 focus:outline-none font-mono" autocomplete="off" />
+            </div>
+            <div id="authFeedback" class="text-red-500 text-xs mt-2 text-center font-mono"></div>
+        </div>
+
+        <button id="executeAuthBtn" class="neon-btn w-full py-3 rounded font-bold uppercase tracking-widest text-sm mb-6">Establish Session</button>
+
+        <div class="border-t border-red-950/60 pt-4 text-center">
+            <p class="text-neutral-400 text-xs leading-relaxed mb-2">
+                পাসওয়ার্ড নিতে চাইলে আপনাকে নির্দিষ্ট প্রিমিয়াম পেমেন্ট সম্পন্ন করতে হবে। <br>
+                <span class="text-neutral-500 font-sans text-[11px]">To acquire the cryptographic access key, a validation payment is mandatory.</span>
+            </p>
+            <p class="text-red-500/80 text-xs font-bold uppercase tracking-wider mb-4">পাসওয়ার্ড চাইলে নিচে মেসেঞ্জারে নক করুন</p>
+            <a href="https://www.facebook.com/sakin.999" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-950 to-neutral-950 border border-red-800/40 px-5 py-2.5 rounded text-xs text-red-400">
+                <span>CONTACT ADMIN VIA MESSENGER</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- ================= USER ARCHIVE CONTAINER (NO UPLOAD SYSTEM HERE) ================= -->
+    <div id="securePortalContainer" class="hidden-system w-full max-w-4xl px-4 py-6">
+        <div class="bg-black border border-red-600/50 p-6 rounded shadow-2xl">
+            <div class="flex justify-between items-center border-b border-red-900 pb-4 mb-6">
+                <h2 class="text-xl font-bold tracking-widest text-red-500" style="font-family:'Orbitron';">📂 CLASSIFIED FEEDS</h2>
+                <span class="text-xs text-neutral-500 font-mono">STATUS: ENCRYPTED_NODE</span>
+            </div>
+            
+            <!-- পিডিএফ লিস্ট গ্রিড (এখানে আপনার আপলোড করা ফাইলগুলো থাকবে) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="publicPdfList">
+                
+                <!-- 📥 পিডিএফ ডাটা শুরু (নতুন পিডিএফ এড করতে এই ব্লকটি কপি-পেস্ট করবেন) -->
+                <div class="flex justify-between items-center bg-zinc-950 p-4 border border-red-950 rounded">
+                    <div class="flex flex-col">
+                        <span class="text-sm text-red-400 font-mono font-bold">CLASSIFIED_DATA_01.pdf</span>
+                        <span class="text-[10px] text-neutral-600 uppercase font-mono">Size: 4.2 MB</span>
+                    </div>
+                    <a href="YOUR_PDF_LINK_HERE" download class="text-xs bg-red-950 hover:bg-red-700 text-red-200 px-4 py-2 rounded font-mono tracking-wider">DOWNLOAD</a>
+                </div>
+                <!-- 📥 পিডিএফ ডাটা শেষ -->
+
+            </div>
+        </div>
+    </div>
+
+<script>
+    (function() {
+        'use strict';
+        // পাসওয়ার্ড `(Sakin).@7890` এর হ্যাশ সিগনেচার
+        const VAULT_SIGNATURE = "79da40d89283f5c71d601b3eb3288f3431ea9ff37a1a4fb4dfa2db6ff4be9cfd";
+
+        const inputField = document.getElementById('cryptoKeyInput');
+        const authBtn = document.getElementById('executeAuthBtn');
+        const feedback = document.getElementById('authFeedback');
+        const loadingEngine = document.getElementById('loadingEngine');
+        const progressBar = document.getElementById('progressBar');
+        const loadingStatus = document.getElementById('loadingStatus');
+
+        async function computeInboundHash(token) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(token);
+            const buffer = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function triggerExecutionPipeline() {
+            const key = inputField.value.trim();
+            if (!key) { feedback.textContent = "⛔ ACCESS KEY REQUIRED."; return; }
+
+            const hashVerification = await computeInboundHash(key);
+            if (hashVerification === VAULT_SIGNATURE) {
+                document.getElementById('gatewayCard').classList.add('hidden-system');
+                loadingEngine.classList.remove('hidden-system');
+                
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 2;
+                    progressBar.style.width = `${progress}%`;
+                    if(progress === 40) loadingStatus.textContent = "Decrypting data blocks...";
+                    if(progress === 80) loadingStatus.textContent = "Purging trace logs...";
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        loadingEngine.classList.add('hidden-system');
+                        document.getElementById('securePortalContainer').classList.remove('hidden-system');
+                    }
+                }, 100); // ৫ সেকেন্ড লোডিং টাইম
+            } else {
+                feedback.textContent = "⛔ ACCESS DENIED: INVALID KEY.";
+            }
+        }
+
+        authBtn.addEventListener('click', triggerExecutionPipeline);
+        inputField.addEventListener('keydown', (e) => { if (e.key === 'Enter') triggerExecutionPipeline(); });
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    })();
+</script>
+</body>
+      </html>
