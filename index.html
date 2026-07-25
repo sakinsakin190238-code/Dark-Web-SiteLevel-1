@@ -1,1 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DARK WEB // Unrestricted Access Portal</title>
 
+<!-- Fonts: a jagged horror display face for the wordmark, a mono terminal face for everything else -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nosifer&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+<style>
+  /* ============================================================
+     TOKENS
+     ============================================================ */
+  :root{
+    --bg: #060505;
+    --bg-panel: #0c0a0a;
+    --red: #ff1a1a;
+    --red-dim: #7a0000;
+    --red-glow: #ff2b2b;
+    --ash: #b8aaa3;
+    --ash-dim: #6d6360;
+    --smoke: rgba(255,40,40,0.08);
+    --font-display: 'Nosifer', cursive;
+    --font-mono: 'Share Tech Mono', monospace;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html,body{
+    background:var(--bg);
+    color:var(--ash);
+    font-family:var(--font-mono);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  /* ============================================================
+     TEXTURED / SMOKY BACKGROUND
+     ============================================================ */
+  body{
+    position:relative;
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(255,20,20,0.10), transparent 40%),
+      radial-gradient(ellipse at 80% 90%, rgba(255,20,20,0.08), transparent 45%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, transparent 1px, transparent 2px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.012) 0px, transparent 1px, transparent 2px);
+  }
+
+  body::before{
+    /* faint grain */
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+    mix-blend-mode:overlay;
+    z-index:999;
+  }
+
+  /* ============================================================
+     LAYOUT SHELL
+     ============================================================ */
+  .laptop-frame{
+    max-width:1200px;
+    margin:24px auto;
+    padding:0 16px;
+  }
+
+  .portal{
+    border:2px solid var(--red-dim);
+    border-radius:6px;
+    box-shadow: 0 0 40px rgba(255,20,20,0.15), inset 0 0 60px rgba(255,0,0,0.06);
+    background:linear-gradient(180deg, #0a0808, #050404);
+    overflow:hidden;
+    position:relative;
+  }
+
+  /* jagged torn edge illusion using clipped pseudo elements top/bottom */
+  .portal::before, .portal::after{
+    content:"";
+    position:absolute; left:0; right:0; height:10px;
+    background:repeating-linear-gradient(115deg, var(--red-dim) 0 6px, transparent 6px 12px);
+    opacity:0.5;
+  }
+  .portal::before{ top:0; }
+  .portal::after{ bottom:0; }
+
+  /* ============================================================
+     HEADER
+     ============================================================ */
+  .site-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:20px 28px 6px;
+  }
+
+  .wordmark{
+    font-family:var(--font-display);
+    font-size:clamp(2.2rem, 6vw, 3.6rem);
+    color:var(--red);
+    text-shadow:
+      0 0 6px var(--red-glow),
+      0 0 18px rgba(255,20,20,0.7),
+      0 0 40px rgba(255,0,0,0.4);
+    letter-spacing:2px;
+    line-height:1;
+    animation: flicker 4s infinite;
+  }
+
+  @keyframes flicker{
+    0%,100%{ opacity:1; }
+    92%{ opacity:1; }
+    93%{ opacity:0.6; }
+    94%{ opacity:1; }
+    96%{ opacity:0.7; }
+    97%{ opacity:1; }
+  }
+
+  .used-in{
+    font-size:0.75rem;
+    letter-spacing:2px;
+    color:var(--ash);
+    display:flex;
+    align-items:center;
+    gap:6px;
+    white-space:nowrap;
+  }
+  .used-in svg{ width:14px; height:14px; fill:var(--red); }
+
+  /* hamburger, hidden on desktop */
+  .menu-toggle{
+    display:none;
+    background:none;
+    border:1px solid var(--red-dim);
+    color:var(--red);
+    font-family:var(--font-mono);
+    font-size:0.75rem;
+    letter-spacing:2px;
+    padding:8px 12px;
+    border-radius:4px;
+    cursor:pointer;
+  }
+
+  /* ============================================================
+     BANNERS
+     ============================================================ */
+  .banner-stack{ padding:10px 28px 4px; }
+
+  .banner{
+    text-align:center;
+    border:1px solid var(--red);
+    border-radius:4px;
+    padding:14px 10px;
+    margin-bottom:10px;
+    background:
+      linear-gradient(180deg, rgba(255,0,0,0.05), rgba(255,0,0,0.01)),
+      repeating-linear-gradient(100deg, transparent 0 18px, rgba(255,0,0,0.04) 18px 20px);
+    box-shadow: 0 0 14px rgba(255,20,20,0.18), inset 0 0 10px rgba(255,0,0,0.05);
+    font-size:clamp(0.85rem, 2.4vw, 1.1rem);
+    letter-spacing:2px;
+  }
+  .banner .top-line{ color:var(--ash); display:block; margin-bottom:6px; }
+  .banner .bottom-line{
+    color:var(--red);
+    text-shadow:0 0 8px var(--red-glow);
+    cursor:pointer;
+  }
+
+  /* ============================================================
+     MAIN BODY: SIDEBAR + GRID
+     ============================================================ */
+  .main-area{
+    display:grid;
+    grid-template-columns:220px 1fr;
+    gap:22px;
+    padding:10px 28px 28px;
+  }
+
+  .sidebar{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+
+  .warning-box{
+    font-size:0.72rem;
+    line-height:1.5;
+    letter-spacing:1px;
+  }
+  .warning-box .label{ color:var(--red); font-weight:bold; }
+  .warning-box .body-text{ color:var(--ash); }
+
+  .nav-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    list-style:none;
+  }
+  .nav-list a{
+    color:var(--ash);
+    text-decoration:none;
+    font-size:0.85rem;
+    letter-spacing:1px;
+    transition:color .15s, text-shadow .15s;
+    display:inline-block;
+  }
+  .nav-list a:hover, .nav-list a:focus-visible{
+    color:var(--red);
+    text-shadow:0 0 8px var(--red-glow);
+    outline:none;
+  }
+
+  .admin-btn{
+    background:none;
+    border:none;
+    color:var(--ash-dim);
+    font-family:var(--font-mono);
+    font-size:0.85rem;
+    letter-spacing:1px;
+    cursor:pointer;
+    text-align:left;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .admin-btn:hover{ color:var(--red); }
+
+  .footer-note{
+    margin-top:auto;
+    font-size:0.68rem;
+    line-height:1.6;
+    color:var(--ash-dim);
+    letter-spacing:1px;
+  }
+
+  /* ============================================================
+     POSTS PANEL
+     ============================================================ */
+  .posts-panel{
+    border:1px solid var(--red-dim);
+    border-radius:6px;
+    padding:18px;
+    background:rgba(255,0,0,0.02);
+    box-shadow: inset 0 0 30px rgba(255,0,0,0.05);
+  }
+
+  .posts-title{
+    text-align:center;
+    color:var(--ash);
+    letter-spacing:2px;
+    font-size:1.1rem;
+    margin-bottom:16px;
+  }
+
+  .posts-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+
+  .post-card{
+    border:1px solid var(--red);
+    border-radius:4px;
+    background:linear-gradient(180deg, rgba(255,0,0,0.05), rgba(0,0,0,0.3));
+    box-shadow:0 0 14px rgba(255,20,20,0.15);
+    padding:12px;
+    position:relative;
+    overflow:hidden;
+  }
+
+  .post-head{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    margin-bottom:10px;
+  }
+  .post-icon{
+    color:var(--red);
+    font-size:1.1rem;
+    line-height:1;
+    filter:drop-shadow(0 0 4px var(--red-glow));
+  }
+  .post-title{
+    font-size:0.78rem;
+    letter-spacing:0.5px;
+    color:var(--ash);
+    line-height:1.35;
+  }
+
+  .post-thumb{
+    width:100%;
+    aspect-ratio:16/9;
+    border-radius:3px;
+    background:#111 center/cover no-repeat;
+    margin-bottom:10px;
+    filter:contrast(1.1) brightness(0.8);
+    border:1px solid rgba(255,0,0,0.25);
+  }
+
+  .post-action{
+    display:block;
+    width:100%;
+    background:transparent;
+    border:1px solid var(--red);
+    color:var(--red);
+    font-family:var(--font-mono);
+    letter-spacing:2px;
+    font-size:0.75rem;
+    padding:8px 0;
+    border-radius:3px;
+    cursor:pointer;
+    text-shadow:0 0 6px var(--red-glow);
+    box-shadow:0 0 10px rgba(255,20,20,0.15), inset 0 0 6px rgba(255,0,0,0.1);
+    transition:background .15s, color .15s;
+  }
+  .post-action:hover, .post-action:focus-visible{
+    background:var(--red);
+    color:#0a0000;
+    outline:none;
+  }
+
+  /* ============================================================
+     ADMIN UPLOAD SECTION (hidden by default)
+     ============================================================ */
+  .admin-panel{
+    display:none;
+    margin:0 28px 24px;
+    border:1px dashed var(--red);
+    border-radius:6px;
+    padding:20px;
+    background:rgba(255,0,0,0.03);
+  }
+  .admin-panel.open{ display:block; }
+
+  .admin-panel h2{
+    color:var(--red);
+    font-size:1rem;
+    letter-spacing:2px;
+    margin-bottom:4px;
+    text-shadow:0 0 6px var(--red-glow);
+  }
+  .admin-panel .sub{
+    font-size:0.7rem;
+    color:var(--ash-dim);
+    margin-bottom:16px;
+    letter-spacing:1px;
+  }
+
+  .admin-form{
+    display:grid;
+    gap:12px;
+    max-width:480px;
+  }
+  .admin-form label{
+    font-size:0.72rem;
+    letter-spacing:1px;
+    color:var(--ash);
+    display:block;
+    margin-bottom:4px;
+  }
+  .admin-form input[type="text"],
+  .admin-form select{
+    width:100%;
+    background:#0a0808;
+    border:1px solid var(--red-dim);
+    color:var(--ash);
+    font-family:var(--font-mono);
+    padding:8px 10px;
+    border-radius:3px;
+    font-size:0.8rem;
+  }
+  .admin-form input[type="text"]:focus,
+  .admin-form select:focus{
+    outline:none;
+    border-color:var(--red);
+    box-shadow:0 0 8px rgba(255,20,20,0.3);
+  }
+
+  .file-drop{
+    border:1px dashed var(--red-dim);
+    border-radius:4px;
+    padding:20px;
+    text-align:center;
+    font-size:0.75rem;
+    color:var(--ash-dim);
+    cursor:pointer;
+    transition:border-color .15s, color .15s;
+  }
+  .file-drop:hover{ border-color:var(--red); color:var(--ash); }
+  .file-drop.has-file{ border-color:var(--red); color:var(--red); }
+
+  .admin-submit{
+    justify-self:start;
+    background:var(--red);
+    color:#0a0000;
+    border:none;
+    padding:10px 22px;
+    font-family:var(--font-mono);
+    letter-spacing:2px;
+    font-size:0.78rem;
+    border-radius:3px;
+    cursor:pointer;
+    box-shadow:0 0 14px rgba(255,20,20,0.4);
+  }
+  .admin-submit:hover{ filter:brightness(1.15); }
+
+  .admin-status{
+    font-size:0.72rem;
+    letter-spacing:1px;
+    color:var(--red);
+    min-height:1em;
+  }
+
+  /* ============================================================
+     RESPONSIVE: MOBILE
+     ============================================================ */
+  @media (max-width: 760px){
+    .main-area{
+      grid-template-columns:1fr;
+    }
+    .sidebar{
+      order:2;
+      border-top:1px solid var(--red-dim);
+      padding-top:14px;
+      display:none; /* collapsible on mobile */
+    }
+    .sidebar.open{ display:flex; }
+    .posts-panel{ order:1; }
+    .posts-grid{ grid-template-columns:1fr; }
+    .menu-toggle{ display:inline-block; }
+    .site-header{ padding:16px 16px 4px; }
+    .banner-stack{ padding:8px 16px 2px; }
+    .main-area{ padding:10px 16px 20px; }
+    .admin-panel{ margin:0 16px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="laptop-frame">
+  <div class="portal">
+
+    <!-- ============ HEADER ============ -->
+    <header class="site-header">
+      <div class="wordmark">DARK WEB</div>
+      <div style="display:flex; align-items:center; gap:14px;">
+        <div class="used-in">
+          USED IN
+          <svg viewBox="0 0 24 24"><path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z"/></svg>
+        </div>
+        <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="sidebar">☰ MENU</button>
+      </div>
+    </header>
+
+    <!-- ============ BANNERS ============ -->
+    <div class="banner-stack">
+      <div class="banner">
+        <span class="top-line">[ UNRESTRICTED ACCESS PORTAL ]</span>
+        <span class="bottom-line" id="uploadDataBanner">[ UPLOAD DATA ]</span>
+      </div>
+    </div>
+
+    <!-- ============ MAIN AREA ============ -->
+    <div class="main-area">
+
+      <!-- ===== SIDEBAR ===== -->
+      <aside class="sidebar" id="sidebar">
+        <div class="warning-box">
+          <span class="label">WARNING:</span><br>
+          <span class="body-text">SITE CONTENT MAY BE DISTURBING</span>
+        </div>
+
+        <ul class="nav-list">
+          <li><a href="#feed">[ FEED ]</a></li>
+          <li><a href="#pdf-archive">[ PDF ARCHIVE ]</a></li>
+          <li><a href="#image-leaks">[ IMAGE LEAKS ]</a></li>
+          <li><a href="#encrypted">[ ENCRYPTED MSGS ]</a></li>
+          <li>
+            <button class="admin-btn" id="adminToggle" aria-expanded="false" aria-controls="adminPanel">
+              [ADMIN] POST 🔒
+            </button>
+          </li>
+        </ul>
+
+        <div class="footer-note">
+          ENCRYPTION ACTIVE<br>
+          ANONYMITY GUARANTEED
+        </div>
+      </aside>
+
+      <!-- ===== POSTS GRID ===== -->
+      <section class="posts-panel">
+        <h2 class="posts-title">POSTS &amp; LEAKS</h2>
+
+        <div class="posts-grid">
+
+          <!-- Post 1: PDF -->
+          <article class="post-card">
+            <div class="post-head">
+              <span class="post-icon">💀</span>
+              <span class="post-title">CLASSIFIED PDF &ndash; DEEP NET INTEL.pdf</span>
+            </div>
+            <div class="post-thumb" style="background:linear-gradient(180deg,#1a1a1a,#050505);"></div>
+            <button class="post-action">DOWNLOAD</button>
+          </article>
+
+          <!-- Post 2: Image -->
+          <article class="post-card">
+            <div class="post-head">
+              <span class="post-icon">🖼️</span>
+              <span class="post-title">CONFIDENTIAL IMAGE &ndash; AREA 51 ARCHIVE.jpg</span>
+            </div>
+            <div class="post-thumb" style="background:repeating-linear-gradient(0deg,#111 0 4px,#0a0a0a 4px 8px);"></div>
+            <button class="post-action">VIEW</button>
+          </article>
+
+          <!-- Post 3: Image -->
+          <article class="post-card">
+            <div class="post-head">
+              <span class="post-icon">🖼️</span>
+              <span class="post-title">CONFIDENTIAL IMAGE &ndash; AREA 51 ARCHIVE.jpg</span>
+            </div>
+            <div class="post-thumb" style="background:radial-gradient(circle at 50% 30%, #222, #050505 70%);"></div>
+            <button class="post-action">VIEW</button>
+          </article>
+
+          <!-- Post 4: Image -->
+          <article class="post-card">
+            <div class="post-head">
+              <span class="post-icon">🖼️</span>
+              <span class="post-title">CONFIDENTIAL IMAGE &ndash; AREA 51 ARCHIVE.jpg</span>
+            </div>
+            <div class="post-thumb" style="background:linear-gradient(135deg,#151515,#000);"></div>
+            <button class="post-action">VIEW</button>
+          </article>
+
+        </div>
+      </section>
+    </div>
+
+    <!-- ============ ADMIN UPLOAD PANEL (hidden by default) ============ -->
+    <div class="admin-panel" id="adminPanel">
+      <h2>[ADMIN] POST NEW LEAK</h2>
+      <p class="sub">Front-end demo only &mdash; no data leaves this page.</p>
+
+      <form class="admin-form" id="adminForm">
+        <div>
+          <label for="postType">Post type</label>
+          <select id="postType">
+            <option value="pdf">Classified PDF</option>
+            <option value="image">Confidential Image</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="postTitle">Title</label>
+          <input type="text" id="postTitle" placeholder="e.g. CLASSIFIED PDF – NEW LEAK.pdf" required>
+        </div>
+
+        <div>
+          <label for="fileInput">File</label>
+          <div class="file-drop" id="fileDrop">Click to choose a file, or drag one here</div>
+          <input type="file" id="fileInput" style="display:none;">
+        </div>
+
+        <button type="submit" class="admin-submit">POST TO ARCHIVE</button>
+        <div class="admin-status" id="adminStatus"></div>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  /* ============================================================
+     MOBILE SIDEBAR TOGGLE
+     ============================================================ */
+  const menuToggle = document.getElementById('menuToggle');
+  const sidebar = document.getElementById('sidebar');
+
+  menuToggle.addEventListener('click', () => {
+    const isOpen = sidebar.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', isOpen);
+    menuToggle.textContent = isOpen ? '✕ CLOSE' : '☰ MENU';
+  });
+
+  /* ============================================================
+     ADMIN PANEL TOGGLE (from sidebar button and banner)
+     ============================================================ */
+  const adminToggle = document.getElementById('adminToggle');
+  const adminPanel = document.getElementById('adminPanel');
+  const uploadDataBanner = document.getElementById('uploadDataBanner');
+
+  function toggleAdminPanel(){
+    const isOpen = adminPanel.classList.toggle('open');
+    adminToggle.setAttribute('aria-expanded', isOpen);
+    if(isOpen){
+      adminPanel.scrollIntoView({ behavior:'smooth', block:'center' });
+    }
+  }
+
+  adminToggle.addEventListener('click', toggleAdminPanel);
+  uploadDataBanner.addEventListener('click', toggleAdminPanel);
+
+  /* ============================================================
+     ADMIN UPLOAD FORM (demo behaviour, no real upload)
+     ============================================================ */
+  const fileDrop = document.getElementById('fileDrop');
+  const fileInput = document.getElementById('fileInput');
+  const adminForm = document.getElementById('adminForm');
+  const adminStatus = document.getElementById('adminStatus');
+
+  fileDrop.addEventListener('click', () => fileInput.click());
+
+  fileInput.addEventListener('change', () => {
+    if(fileInput.files.length){
+      fileDrop.textContent = fileInput.files[0].name;
+      fileDrop.classList.add('has-file');
+    }
+  });
+
+  ['dragover','dragenter'].forEach(evt =>
+    fileDrop.addEventListener(evt, e => { e.preventDefault(); fileDrop.classList.add('has-file'); })
+  );
+  fileDrop.addEventListener('drop', e => {
+    e.preventDefault();
+    if(e.dataTransfer.files.length){
+      fileInput.files = e.dataTransfer.files;
+      fileDrop.textContent = e.dataTransfer.files[0].name;
+    }
+  });
+
+  adminForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const title = document.getElementById('postTitle').value.trim();
+    if(!title || !fileInput.files.length){
+      adminStatus.textContent = 'ERROR: title and file are both required.';
+      return;
+    }
+    adminStatus.textContent = `QUEUED: "${title}" staged for the archive (demo only).`;
+    adminForm.reset();
+    fileDrop.textContent = 'Click to choose a file, or drag one here';
+    fileDrop.classList.remove('has-file');
+  });
+
+  /* Reset mobile menu label on resize past breakpoint */
+  window.addEventListener('resize', () => {
+    if(window.innerWidth > 760){
+      sidebar.classList.remove('open');
+      menuToggle.textContent = '☰ MENU';
+      menuToggle.setAttribute('aria-expanded', false);
+    }
+  });
+</script>
+
+</body>
+  </html>
